@@ -1,0 +1,33 @@
+{
+    "ppl_ages":{
+       "Hila": 31,
+        "Yael": 35,
+        "Reut": 35,
+        "Moshe": 29,
+        "David": 10,
+        "Matt": 22,
+        "Lilach": 8,
+        "Yuri": 26,
+        "Yogev": 11,
+        "Efrat": 25,
+        "Yehuda": 30,
+        "Dov": 12,
+        "Yoni": 23,
+        "Michal": 76,
+        "Yosef": 23,
+        "Gili": 75,
+        "Uri": 25,
+        "Michael": 45,
+        "Liran": 25,
+        "Nathan": 65,
+        "Gal": 25,
+        "Danny": 38,
+        "Efraim": 57,
+        "Ofek": 21,
+        "Gil": 27,
+        "Ofer": 9,
+        "Omer": 89,
+        "Mush": 55
+	},
+	"buckets": [20,40,25,11]
+}
