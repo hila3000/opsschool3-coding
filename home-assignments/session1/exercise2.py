@@ -31,7 +31,7 @@ def current_location(location_by_ip_api_url):
     return current_city, current_country
 
 
-def write_my_city_weather_to_file(current_city, current_country):
+def local_weather_output_to_file(current_city, current_country):
     custom_weather_api_url = weather_api_url.replace("{city}", current_city)
     weather_request_data = invoke_request_to_url(custom_weather_api_url)
     weather_description = weather_request_data["weather"][0]["description"]
@@ -54,10 +54,9 @@ def check_weather_in_listed_cities(worldwide_cities):
         print("The weather in", city, ', ' + country_name, "is", int(weather_temperature), "Celsius degrees.")
 
 
-
 def main():
     current_city, current_country = current_location(location_by_ip_api_url)
-    write_my_city_weather_to_file(current_city, current_country)
+    local_weather_output_to_file(current_city, current_country)
     check_weather_in_listed_cities(worldwide_cities)
 
 
