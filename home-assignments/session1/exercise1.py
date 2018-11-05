@@ -28,19 +28,19 @@ def full_bucket_list_build(sorted_orig_buckets, oldest_age):
     :return: full list of buckets,
              dynamically generated from the buckets list in input json file + considering max age
     """
-    tuple_buckets = []
+    ages_ranges = []
     for i in range(len(sorted_orig_buckets)):
         if i == 0:
-            tuple_buckets.append((0, sorted_orig_buckets[i]))
+            ages_ranges.append((0, sorted_orig_buckets[i]))
             continue
-        tuple_buckets.append((sorted_orig_buckets[i - 1], sorted_orig_buckets[i]))
         if i == len(sorted_orig_buckets) - 1:
-            tuple_buckets.append((sorted_orig_buckets[i], oldest_age))
+            ages_ranges.append((sorted_orig_buckets[i], oldest_age))
             continue
-    return tuple_buckets
+        ages_ranges.append((sorted_orig_buckets[i - 1], sorted_orig_buckets[i]))
+    return ages_ranges
 
 
-def dict_iteration(input_dict, full_bucket_list):
+def group_people_by_ages(input_dict, full_bucket_list):
     """
     Go over all people in input json file,
     Divide them to age groups
@@ -68,7 +68,7 @@ def write_to_file(ppl_by_ages_groups):
 
 
 def main():
-    if len(argv) == 2:
+    if len(argv) == 2:  # Script will run only if one input file was provided
         ppl_ages_dict = get_dict_from_json(argv[1])
         if not ppl_ages_dict:
             return -1
@@ -76,7 +76,7 @@ def main():
         ppl_dict = ppl_ages_dict["ppl_ages"]
         oldest_age = max(ppl_dict.items(), key=operator.itemgetter(1))[1]
         full_bucket_list = full_bucket_list_build(sorted_orig_buckets, oldest_age)
-        ppl_by_ages_groups = (dict_iteration(ppl_ages_dict["ppl_ages"], full_bucket_list))
+        ppl_by_ages_groups = (group_people_by_ages(ppl_ages_dict["ppl_ages"], full_bucket_list))
         write_to_file(ppl_by_ages_groups)
     else:
         print('USAGE: python exercise1.py <JSON_PATH>')
