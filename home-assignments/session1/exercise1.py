@@ -68,7 +68,7 @@ def write_to_file(ppl_by_ages_groups):
 
 
 def main():
-    if len(argv) == 2:
+    if len(argv) == 2:  # Script will run only if one input file was provided
         ppl_ages_dict = get_dict_from_json(argv[1])
         if not ppl_ages_dict:
             return -1
