@@ -1,7 +1,7 @@
 import json
+import operator
 from json.decoder import JSONDecodeError
-from collections import abc
-from sys import maxsize, argv
+from sys import argv
 import subprocess
 
 try:
@@ -18,9 +18,11 @@ def get_dict_from_json(json_file):
             return ppl_ages_dict
     except JSONDecodeError:
         print("The input file isn't parsed correctly")
+    except FileNotFoundError:
+        print("File", argv[1], "Not Found")
 
 
-def full_bucket_list_build(sorted_orig_buckets):
+def full_bucket_list_build(sorted_orig_buckets, oldest_age):
     """
     :param sorted_orig_buckets:
     :return: full list of buckets,
@@ -33,7 +35,7 @@ def full_bucket_list_build(sorted_orig_buckets):
             continue
         tuple_buckets.append((sorted_orig_buckets[i - 1], sorted_orig_buckets[i]))
         if i == len(sorted_orig_buckets) - 1:
-            tuple_buckets.append((sorted_orig_buckets[i], maxsize))
+            tuple_buckets.append((sorted_orig_buckets[i], oldest_age))
             continue
     return tuple_buckets
 
@@ -53,6 +55,7 @@ def dict_iteration(input_dict, full_bucket_list):
         for key in input_dict:
             if bucket[0] <= input_dict[key] < bucket[1]:
                 ages_groups[bucket_key].append(key)
+                continue
     return ages_groups
 
 
@@ -65,11 +68,18 @@ def write_to_file(ppl_by_ages_groups):
 
 
 def main():
-    ppl_ages_dict = get_dict_from_json("ppl_ages.json")
-    sorted_orig_buckets = sorted(ppl_ages_dict["buckets"])
-    full_bucket_list = full_bucket_list_build(sorted_orig_buckets)
-    ppl_by_ages_groups = (dict_iteration(ppl_ages_dict["ppl_ages"], full_bucket_list))
-    write_to_file(ppl_by_ages_groups)
+    if len(argv) == 2:
+        ppl_ages_dict = get_dict_from_json(argv[1])
+        if not ppl_ages_dict:
+            return -1
+        sorted_orig_buckets = sorted(ppl_ages_dict["buckets"])
+        ppl_dict = ppl_ages_dict["ppl_ages"]
+        oldest_age = max(ppl_dict.items(), key=operator.itemgetter(1))[1]
+        full_bucket_list = full_bucket_list_build(sorted_orig_buckets, oldest_age)
+        ppl_by_ages_groups = (dict_iteration(ppl_ages_dict["ppl_ages"], full_bucket_list))
+        write_to_file(ppl_by_ages_groups)
+    else:
+        print('USAGE: python exercise1.py <JSON_PATH>')
 
 
 if __name__ == "__main__":
