@@ -17,7 +17,7 @@ weather_api_url = 'http://api.openweathermap.org/data/2.5/weather?q={city}&APPID
 worldwide_cities = ["Paris", "Tokyo", "London", "Rome", "Oga", "Sydney", "Istanbul", "Seoul", "Singapore", "Bangkok"]
 
 
-def invoke_request_to_url(url): #
+def invoke_request_to_url(url):
     response = requests.get(url)
     json_response = response.json()
     return json_response
