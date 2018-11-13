@@ -69,7 +69,6 @@ def main():
         ppl_dict = ppl_ages_dict["ppl_ages"]
         oldest_age = max(ppl_dict.items(), key=operator.itemgetter(1))[1]
         full_bucket_list = full_bucket_list_build(sorted_orig_buckets, oldest_age)
-        print(full_bucket_list)
         ppl_by_ages_groups = (group_people_by_ages(ppl_ages_dict["ppl_ages"], full_bucket_list))
         write_to_file(ppl_by_ages_groups)
     else:
