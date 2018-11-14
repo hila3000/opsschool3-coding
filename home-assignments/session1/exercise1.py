@@ -1,3 +1,5 @@
+#/usr/bin/python3
+
 import json
 import operator
 from json.decoder import JSONDecodeError
