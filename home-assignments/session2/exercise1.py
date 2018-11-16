@@ -24,7 +24,6 @@ def main(city, unit, forecast):
         print("No data for the requested city",city, "or no such city exist")
 
 
-
 def invoke_request_to_weather_api(city, unit):
     weather = Weather(unit=getattr(Unit, unit))
     city_weather_info = weather.lookup_by_location(city)
