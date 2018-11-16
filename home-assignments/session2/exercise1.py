@@ -1,37 +1,59 @@
-#import subprocess
-#subprocess.call(['pip', 'install', 'weather-api'])
-from sys import argv
-import datetime
-import time
+import subprocess
 from weather import Weather, Unit
 
-weather = Weather(unit=Unit.CELSIUS)
+try:
+    import click
+except ModuleNotFoundError:
+    subprocess.call(['pip', 'install', 'click'])
+    import click
 
 
-def weather_info_by_city(city):
+@click.command()
+@click.option('--city', required=True, help='get weather forecast for this city')
+@click.option("--forecast", required=False, default="TODAY", help="TODAY or TODAY+n for future forecast, n = [1-9]",
+              show_default=True)
+@click.option('-c', 'unit', flag_value='CELSIUS', default=True)
+@click.option('-f', 'unit', flag_value='FAHRENHEIT')
+
+
+def main(city, unit, forecast):
+    try:
+        invoke_request_to_weather_api(city, unit)
+        print_weather_by_city(city, unit, forecast)
+    except AttributeError:
+        print("No data for the requested city",city, "or no such city exist")
+
+
+
+def invoke_request_to_weather_api(city, unit):
+    weather = Weather(unit=getattr(Unit, unit))
     city_weather_info = weather.lookup_by_location(city)
-    city_forecasts = city_weather_info.forecast
-    weather_description = city_forecasts[0].text
-    weather_low_temp = city_forecasts[0].low
-    weather_high_temp = city_forecasts[0].high
-    return weather_description, weather_low_temp, weather_high_temp
+    return city_weather_info
 
 
-def write_weather_by_city_to_file(city):
-    weather_description, weather_low_temp, weather_high_temp = weather_info_by_city(city)
-    with open("{}weather_in_{}.txt".format("", city), "w") as text_file:
-        print(
-            "The weather in {} today is {} with temperature trailing from {}-{} Celsius".format(city, weather_description,
-                                                                                             weather_low_temp,
-                                                                                             weather_high_temp),
-                                                                                             file=text_file)
+def number_of_forecast_days(forecast):
+    if forecast == "TODAY" or forecast == None:
+        num_desired_forecast = 1
+    else:
+        num_desired_forecast = int(forecast.split('TODAY+')[1]) + 1
+        if num_desired_forecast > 10:
+            print("Weather API can only show upcoming 9 days. Please type: --forecast TODAY+[1-9] (without brackets)\n")
+            exit(1)
+    return num_desired_forecast
 
 
-def main():
-    if len(argv) == 2:
-        city = argv[1]
-        weather_info_by_city(city)
-        write_weather_by_city_to_file(city)
+def print_weather_by_city(city, unit, forecast):
+    num_desired_forecast = number_of_forecast_days(forecast)
+    city_weather_info = invoke_request_to_weather_api(city, unit)
+    for num, forecast in enumerate(city_weather_info.forecast[:num_desired_forecast]):
+        if num == 0:
+            begin_sentence_with = f'The weather in {city_weather_info.location.city} today is'
+        else:
+            begin_sentence_with = forecast.date
+        print(f'{begin_sentence_with} {forecast.text} with temperatures trailing from' \
+              f' 'f'{forecast.low}-{forecast.high} {unit}.')
+        if num == 0 and num_desired_forecast > 1:
+            print(f'\nForecast for the next {num_desired_forecast - 1} days: \n')
 
 
 if __name__ == "__main__":
