@@ -1,13 +1,15 @@
 #!/usr/bin/python3
 
 import subprocess
-from weather import Weather, Unit
 
 try:
     import click
+    from weather import Weather, Unit
 except ModuleNotFoundError:
     subprocess.call(['pip3', 'install', 'click'])
+    subprocess.call(['pip3', 'install', 'weather-api'])
     import click
+    from weather import Weather, Unit
 
 
 @click.command()
