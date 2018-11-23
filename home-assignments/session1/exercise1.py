@@ -9,7 +9,7 @@ import subprocess
 try:
     import yaml
 except ModuleNotFoundError:
-    subprocess.call(['pip', 'install', 'pyyaml'])
+    subprocess.call(['pip3', 'install', 'pyyaml'])
     import yaml
 
 
