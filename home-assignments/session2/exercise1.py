@@ -20,19 +20,16 @@ except ModuleNotFoundError:
 def main(city, unit, forecast):
     try:
         invoke_request_to_weather_api(city, unit)
-        print_weather_by_city(city, unit, forecast)
+        print_city_weather_forecast(city, unit, forecast)
     except AttributeError:
         print("No data for the requested city", city, "or no such city exist")
 
 
 def invoke_request_to_weather_api(city, unit):
-    if unit == 'c':
-        unit = 'CELSIUS'
-    elif unit == 'f':
-        unit = 'FAHRENHEIT'
-    weather = Weather(unit=getattr(Unit, unit))
+    units_index = {'c': 'CELSIUS', 'f': 'FAHRENHEIT'}
+    weather = Weather(unit=getattr(Unit, units_index.get(unit)))
     city_weather_info = weather.lookup_by_location(city)
-    return city_weather_info, unit
+    return city_weather_info, units_index
 
 
 def number_of_forecast_days(forecast):
@@ -46,18 +43,18 @@ def number_of_forecast_days(forecast):
     return num_desired_forecast
 
 
-def print_weather_by_city(city, unit, forecast):
-    num_desired_forecast = number_of_forecast_days(forecast)
-    city_weather_info, unit = invoke_request_to_weather_api(city, unit)
-    for num, forecast in enumerate(city_weather_info.forecast[:num_desired_forecast]):
+def print_city_weather_forecast(city, unit, forecast):
+    forecast_days = number_of_forecast_days(forecast)
+    city_weather_info, units_index = invoke_request_to_weather_api(city, unit)
+    for num, forecast in enumerate(city_weather_info.forecast[:forecast_days]):
         if num == 0:
             begin_sentence_with = f'The weather in {city_weather_info.location.city} today is'
         else:
             begin_sentence_with = forecast.date
         print(f'{begin_sentence_with} {forecast.text} with temperatures trailing from'
-              f' 'f'{forecast.low}-{forecast.high} {unit}.')
-        if num == 0 and num_desired_forecast > 1:
-            print(f'\nForecast for the next {num_desired_forecast - 1} days: \n')
+              f' 'f'{forecast.low}-{forecast.high} {units_index.get(unit)}.')
+        if num == 0 and forecast_days > 1:
+            print(f'\nForecast for the next {forecast_days - 1} days: \n')
 
 
 if __name__ == "__main__":
